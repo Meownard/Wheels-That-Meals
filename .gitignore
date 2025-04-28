@@ -1,0 +1,12 @@
+# Java / Maven
+/backend/mealsonwheels-backend/target/
+*.class
+*.jar
+
+# Node / React
+/frontend/merrymeal-frontend/node_modules/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
