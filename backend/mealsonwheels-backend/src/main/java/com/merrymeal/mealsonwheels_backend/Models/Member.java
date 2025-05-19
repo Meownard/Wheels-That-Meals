@@ -1,46 +1,33 @@
 package com.merrymeal.mealsonwheels_backend.Models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import javax.persistence.Entity;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.OneToMany;
+import javax.persistence.CascadeType;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import java.util.ArrayList;
+import java.util.List;
+// import com.merrymeal.mealsonwheels_backend.Models.Order;
 
 @Entity
-@Table(name = "members")
-public class Member {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
+@DiscriminatorValue("MEMBER")
+public class Member extends User {
+    
     private String address;
-    private String contactDetails;
+    private String location;
     private String dietaryRestrictions;
 
-    public Member() {}
-
-    public Member(String name, String address, String contactDetails, String dietaryRestrictions) {
-        this.name = name;
-        this.address = address;
-        this.contactDetails = contactDetails;
-        this.dietaryRestrictions = dietaryRestrictions;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Object> orders = new ArrayList<>();
+    
+    @ManyToOne
+    @JoinColumn(name = "caregiver_id")
+    @JsonBackReference
+    private Caregiver caregiver;
 
     public String getAddress() {
         return address;
@@ -50,12 +37,12 @@ public class Member {
         this.address = address;
     }
 
-    public String getContactDetails() {
-        return contactDetails;
+    public String getLocation() {
+        return location;
     }
 
-    public void setContactDetails(String contactDetails) {
-        this.contactDetails = contactDetails;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getDietaryRestrictions() {
@@ -64,5 +51,21 @@ public class Member {
 
     public void setDietaryRestrictions(String dietaryRestrictions) {
         this.dietaryRestrictions = dietaryRestrictions;
+    }
+
+    public List<Object> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Object> orders) {
+        this.orders = orders;
+    }
+
+    public Caregiver getCaregiver() {
+        return caregiver;
+    }
+
+    public void setCaregiver(Caregiver caregiver) {
+        this.caregiver = caregiver;
     }
 }
