@@ -8,5 +8,5 @@ import com.merrymeal.mealsonwheels_backend.Models.Meal;
 @Repository
 public interface MealRepository extends JpaRepository<Meal, Long> {
     List<Meal> findByMenuId(Long menuId);
-    List<Meal> findByAvailableTrue();
+    List<Meal> findByPartnerId(Long partnerId);
 }
