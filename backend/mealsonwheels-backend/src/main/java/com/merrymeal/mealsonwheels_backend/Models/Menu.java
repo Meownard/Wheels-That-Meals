@@ -1,10 +1,9 @@
 package com.merrymeal.mealsonwheels_backend.Models;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import java.util.Objects;
 
 @Entity
 @Table(name = "menus")
@@ -16,22 +15,23 @@ public class Menu {
 
     private String menuName;
 
-    private String description;
-    
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    private String menuType;
+
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Dish> dishes = new ArrayList<>();
 
     // Constructors
+
     public Menu() {
     }
 
-    public Menu(String menuName, String description) {
+    public Menu(String menuName, String menuType) {
         this.menuName = menuName;
-        this.description = description;
+        this.menuType = menuType;
     }
 
     // Getters and Setters
+
     public Long getId() {
         return id;
     }
@@ -48,12 +48,12 @@ public class Menu {
         this.menuName = menuName;
     }
 
-    public String getDescription() {
-        return description;
+    public String getMenuType() {
+        return menuType;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setMenuType(String menuType) {
+        this.menuType = menuType;
     }
 
     public List<Dish> getDishes() {
@@ -64,13 +64,31 @@ public class Menu {
         this.dishes = dishes;
     }
 
-    public void addDish(Dish dish) {
-        dishes.add(dish);
-        dish.setMenu(this);
+    // equals and hashCode
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Menu)) return false;
+        Menu menu = (Menu) o;
+        return Objects.equals(id, menu.id) &&
+                Objects.equals(menuName, menu.menuName) &&
+                Objects.equals(menuType, menu.menuType);
     }
 
-    public void removeDish(Dish dish) {
-        dishes.remove(dish);
-        dish.setMenu(null);
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, menuName, menuType);
+    }
+
+    // toString
+
+    @Override
+    public String toString() {
+        return "Menu{" +
+                "id=" + id +
+                ", menuName='" + menuName + '\'' +
+                ", menuType='" + menuType + '\'' +
+                '}';
     }
 }

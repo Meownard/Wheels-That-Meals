@@ -1,8 +1,7 @@
 package com.merrymeal.mealsonwheels_backend.Models;
 
 import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.util.Objects;
 
 @Entity
 @Table(name = "dishes")
@@ -13,32 +12,34 @@ public class Dish {
     private Long id;
 
     private String dishName;
+
     private String description;
-    private double price;
-    private String photoUrl;
-    
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    @JsonBackReference
-    private Menu menu;
+
+    private String photo;
+
+    private Integer quantity;
 
     @ManyToOne
     @JoinColumn(name = "meal_id")
-    @JsonBackReference
     private Meal meal;
 
+    @ManyToOne
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
+
     // Constructors
+
     public Dish() {
     }
 
-    public Dish(String dishName, String description, double price, String photoUrl) {
+    public Dish(String dishName, String description, Integer quantity) {
         this.dishName = dishName;
         this.description = description;
-        this.price = price;
-        this.photoUrl = photoUrl;
+        this.quantity = quantity;
     }
 
     // Getters and Setters
+
     public Long getId() {
         return id;
     }
@@ -63,20 +64,28 @@ public class Dish {
         this.description = description;
     }
 
-    public double getPrice() {
-        return price;
+    public String getPhoto() {
+        return photo;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public Integer getQuantity() {
+        return quantity;
     }
 
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public Meal getMeal() {
+        return meal;
+    }
+
+    public void setMeal(Meal meal) {
+        this.meal = meal;
     }
 
     public Menu getMenu() {
@@ -87,11 +96,31 @@ public class Dish {
         this.menu = menu;
     }
 
-    public Meal getMeal() {
-        return meal;
+    // equals and hashCode
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Dish)) return false;
+        Dish dish = (Dish) o;
+        return Objects.equals(id, dish.id) &&
+                Objects.equals(dishName, dish.dishName);
     }
 
-    public void setMeal(Meal meal) {
-        this.meal = meal;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, dishName);
+    }
+
+    // toString
+
+    @Override
+    public String toString() {
+        return "Dish{" +
+                "id=" + id +
+                ", dishName='" + dishName + '\'' +
+                ", description='" + description + '\'' +
+                ", quantity=" + quantity +
+                '}';
     }
 }

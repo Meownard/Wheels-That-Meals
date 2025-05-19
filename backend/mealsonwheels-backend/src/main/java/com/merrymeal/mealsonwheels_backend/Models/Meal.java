@@ -1,10 +1,9 @@
 package com.merrymeal.mealsonwheels_backend.Models;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import java.util.Objects;
 
 @Entity
 @Table(name = "meals")
@@ -15,29 +14,30 @@ public class Meal {
     private Long id;
 
     private String mealName;
+
     private String mealPhoto;
+
     private String mealDesc;
-    
+
     @ManyToOne
     @JoinColumn(name = "partner_id")
-    @JsonManagedReference
     private Partner partner;
-    
-    @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL)
-    @JsonManagedReference
+
+    @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Dish> dishes = new ArrayList<>();
 
     // Constructors
     public Meal() {
     }
 
-    public Meal(String mealName, String mealDesc, String mealPhoto) {
+    public Meal(String mealName, String mealPhoto, String mealDesc) {
         this.mealName = mealName;
-        this.mealDesc = mealDesc;
         this.mealPhoto = mealPhoto;
+        this.mealDesc = mealDesc;
     }
 
     // Getters and Setters
+
     public Long getId() {
         return id;
     }
@@ -86,13 +86,31 @@ public class Meal {
         this.dishes = dishes;
     }
 
-    public void addDish(Dish dish) {
-        dishes.add(dish);
-        dish.setMeal(this);
+    // equals and hashCode
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Meal)) return false;
+        Meal meal = (Meal) o;
+        return Objects.equals(id, meal.id) &&
+                Objects.equals(mealName, meal.mealName);
     }
 
-    public void removeDish(Dish dish) {
-        dishes.remove(dish);
-        dish.setMeal(null);
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, mealName);
+    }
+
+    // toString
+
+    @Override
+    public String toString() {
+        return "Meal{" +
+                "id=" + id +
+                ", mealName='" + mealName + '\'' +
+                ", mealPhoto='" + mealPhoto + '\'' +
+                ", mealDesc='" + mealDesc + '\'' +
+                '}';
     }
 }
