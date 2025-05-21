@@ -1,4 +1,4 @@
-package com.merrymeal.mealsonwheels_backend.Controller;
+package com.merrymeal.mealsonwheels_backend.controller;
 
 public class PartnershipController {
     
