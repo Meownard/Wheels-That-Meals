@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "KeyGenerator",
+      "request": "launch",
+      "mainClass": "com.merrymeal.mealsonwheels_backend.config.KeyGenerator",
+      "projectName": "mealsonwheels-backend"
+    },
+    {
+      "type": "java",
+      "name": "Launch Spring Boot",
+      "request": "launch",
+      "mainClass": "com.merrymeal.mealsonwheels_backend.MealsonwheelsBackendApplication",
+      "console": "integratedTerminal"
+    }
+  ]
+}
