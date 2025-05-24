@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "app")
 public class JwtConfig {
-
     private String jwtSecret;
     private long jwtExpirationInMs;
 

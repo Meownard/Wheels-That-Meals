@@ -1,6 +1,6 @@
 package com.merrymeal.mealsonwheels_backend.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -13,11 +13,14 @@ public class Dish {
 
     private String dishName;
 
-    private String description;
+    private String dishDesc;
 
     private String photo;
 
     private Integer quantity;
+
+    private String dishType;       // e.g., Main, Side, Dessert
+    private String dishDietary;    // e.g., Vegan, Nut-Free
 
     @ManyToOne
     @JoinColumn(name = "meal_id")
@@ -28,73 +31,53 @@ public class Dish {
     private Menu menu;
 
     // Constructors
+    public Dish() {}
 
-    public Dish() {
-    }
-
-    public Dish(String dishName, String description, Integer quantity) {
+    public Dish(String dishName, String dishDesc, Integer quantity, String dishType, String dishDietary) {
         this.dishName = dishName;
-        this.description = description;
+        this.dishDesc = dishDesc;
         this.quantity = quantity;
+        this.dishType = dishType;
+        this.dishDietary = dishDietary;
     }
 
     // Getters and Setters
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public void setId(Long id) { this.id = id; }
 
-    public String getDishName() {
-        return dishName;
-    }
+    public String getDishName() { return dishName; }
 
-    public void setDishName(String dishName) {
-        this.dishName = dishName;
-    }
+    public void setDishName(String dishName) { this.dishName = dishName; }
 
-    public String getDescription() {
-        return description;
-    }
+    public String getDishDesc() { return dishDesc; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public void setDishDesc(String dishDesc) { this.dishDesc = dishDesc; }
 
-    public String getPhoto() {
-        return photo;
-    }
+    public String getPhoto() { return photo; }
 
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
+    public void setPhoto(String photo) { this.photo = photo; }
 
-    public Integer getQuantity() {
-        return quantity;
-    }
+    public Integer getQuantity() { return quantity; }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
 
-    public Meal getMeal() {
-        return meal;
-    }
+    public String getDishType() { return dishType; }
 
-    public void setMeal(Meal meal) {
-        this.meal = meal;
-    }
+    public void setDishType(String dishType) { this.dishType = dishType; }
 
-    public Menu getMenu() {
-        return menu;
-    }
+    public String getDishDietary() { return dishDietary; }
 
-    public void setMenu(Menu menu) {
-        this.menu = menu;
-    }
+    public void setDishDietary(String dishDietary) { this.dishDietary = dishDietary; }
+
+    public Meal getMeal() { return meal; }
+
+    public void setMeal(Meal meal) { this.meal = meal; }
+
+    public Menu getMenu() { return menu; }
+
+    public void setMenu(Menu menu) { this.menu = menu; }
 
     // equals and hashCode
 
@@ -104,7 +87,7 @@ public class Dish {
         if (!(o instanceof Dish)) return false;
         Dish dish = (Dish) o;
         return Objects.equals(id, dish.id) &&
-                Objects.equals(dishName, dish.dishName);
+               Objects.equals(dishName, dish.dishName);
     }
 
     @Override
@@ -119,7 +102,9 @@ public class Dish {
         return "Dish{" +
                 "id=" + id +
                 ", dishName='" + dishName + '\'' +
-                ", description='" + description + '\'' +
+                ", dishDesc='" + dishDesc + '\'' +
+                ", dishType='" + dishType + '\'' +
+                ", dishDietary='" + dishDietary + '\'' +
                 ", quantity=" + quantity +
                 '}';
     }

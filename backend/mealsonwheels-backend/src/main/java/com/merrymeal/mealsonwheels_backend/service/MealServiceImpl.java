@@ -41,7 +41,8 @@ public class MealServiceImpl implements MealService {
         meal.setMealDesc(mealDetails.getMealDesc());
         meal.setMealPhoto(mealDetails.getMealPhoto());
         meal.setPartner(mealDetails.getPartner());
-        // Update other fields as necessary
+        meal.setMealType(mealDetails.getMealType());        // NEW
+        meal.setMealDietary(mealDetails.getMealDietary());  // NEW
         return mealRepository.save(meal);
     }
 

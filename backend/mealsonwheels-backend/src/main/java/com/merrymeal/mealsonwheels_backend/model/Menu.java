@@ -1,6 +1,6 @@
 package com.merrymeal.mealsonwheels_backend.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +19,11 @@ public class Menu {
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Dish> dishes = new ArrayList<>();
+
+    // --- ADD THIS RELATIONSHIP BACK TO MEAL ---
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Meal> meals = new ArrayList<>();
+    // ------------------------------------------
 
     // Constructors
 
@@ -63,6 +68,16 @@ public class Menu {
     public void setDishes(List<Dish> dishes) {
         this.dishes = dishes;
     }
+
+    // --- ADD GETTER AND SETTER FOR MEALS ---
+    public List<Meal> getMeals() {
+        return meals;
+    }
+
+    public void setMeals(List<Meal> meals) {
+        this.meals = meals;
+    }
+    // -------------------------------------
 
     // equals and hashCode
 

@@ -1,6 +1,6 @@
 package com.merrymeal.mealsonwheels_backend.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +9,13 @@ import java.util.List;
 @DiscriminatorValue("PARTNER")
 public class Partner extends User {
 
-    private String organizationName;
-    private String description;
-    private String address;
+    private String companyName;
+    private String companyDes;
+    private String companyAddress;
+    
+    // Change these from String to double for proper coordinates handling
+    private double companyLocationLat;
+    private double companyLocationLong;
 
     @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -22,35 +26,54 @@ public class Partner extends User {
     }
 
     public Partner(String username, String phoneNumber, String email, String password,
-                   boolean approved, Role role, String organizationName, String description, String address) {
+                   boolean approved, Role role, String companyName, String companyDes, 
+                   String companyAddress, double companyLocationLat, double companyLocationLong) {
         super(username, phoneNumber, email, password, approved, role);
-        this.organizationName = organizationName;
-        this.description = description;
-        this.address = address;
+        this.companyName = companyName;
+        this.companyDes = companyDes;
+        this.companyAddress = companyAddress;
+        this.companyLocationLat = companyLocationLat;
+        this.companyLocationLong = companyLocationLong;
     }
 
-    public String getOrganizationName() {
-        return organizationName;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
-    public String getDescription() {
-        return description;
+    public String getCompanyDes() {
+        return companyDes;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCompanyDes(String companyDes) {
+        this.companyDes = companyDes;
     }
 
-    public String getAddress() {
-        return address;
+    public double getCompanyLocationLat() {
+        return companyLocationLat;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setCompanyLocationLat(double companyLocationLat) {
+        this.companyLocationLat = companyLocationLat;
+    }
+
+    public double getCompanyLocationLong() {
+        return companyLocationLong;
+    }
+
+    public void setCompanyLocationLong(double companyLocationLong) {
+        this.companyLocationLong = companyLocationLong;
+    }
+
+    public String getCompanyAddress() {
+        return companyAddress;
+    }
+
+    public void setCompanyAddress(String companyAddress) {
+        this.companyAddress = companyAddress;
     }
 
     public List<Meal> getProvidedMeals() {

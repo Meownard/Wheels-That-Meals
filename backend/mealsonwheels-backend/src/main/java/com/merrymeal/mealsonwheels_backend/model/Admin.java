@@ -1,7 +1,6 @@
 package com.merrymeal.mealsonwheels_backend.model;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import jakarta.persistence.*;
 
 @Entity
 @DiscriminatorValue("ADMIN")

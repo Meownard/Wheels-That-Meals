@@ -11,8 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.io.IOException;
 
-import java.math.BigDecimal;
+
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -33,12 +34,22 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String login(LoginDTO loginDTO) {
+        // Authenticate the user first
         authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                loginDTO.getEmail(),
-                loginDTO.getPassword()
-            )
-        );
+                new UsernamePasswordAuthenticationToken(
+                        loginDTO.getEmail(),
+                        loginDTO.getPassword()));
+
+        // Fetch user by email
+        User user = userRepository.findByEmail(loginDTO.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Check approval status
+        if (!user.isApproved()) {
+            throw new RuntimeException("Account is pending admin approval.");
+        }
+
+        // Generate token if approved
         return jwtTokenProvider.generateToken(loginDTO.getEmail());
     }
 
@@ -66,45 +77,90 @@ public class AuthServiceImpl implements AuthService {
         return mapToDTO(savedUser);
     }
 
-    private User createUserInstance(RegisterDTO dto, Role role, String encodedPassword) {
-        String roleName = role.getName().toUpperCase();
+@Autowired
+private LocationIQService locationIQService;
 
-        switch (roleName) {
-            case "ROLE_ADMIN":
-                return new Admin(dto.getUsername(), dto.getPhoneNumber(), dto.getEmail(), encodedPassword, true, role);
+private User createUserInstance(RegisterDTO dto, Role role, String encodedPassword) {
+    String roleName = role.getName().toUpperCase();
 
+    switch (roleName) {
+        case "ROLE_ADMIN":
+            return new Admin(dto.getUsername(), dto.getPhoneNumber(), dto.getEmail(), encodedPassword, true, role);
+        
             case "ROLE_MEMBER":
-                return new Member(dto.getUsername(), dto.getPhoneNumber(), dto.getEmail(), encodedPassword, false, role,
-                        "DEFAULT_ADDRESS", "DEFAULT_LOCATION");
+                double lat, lon;
+                try {
+                    double[] coords = locationIQService.getCoordinatesFromAddress(dto.getAddress());
+                    lat = coords[0];
+                    lon = coords[1];
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to fetch coordinates for member address: " + e.getMessage());
+                }
 
-            case "ROLE_VOLUNTEER":
-                return new Volunteer(dto.getUsername(), dto.getPhoneNumber(), dto.getEmail(), encodedPassword, false, role,
-                        "Flexible", "Meal Packing");
+                return new Member(
+                        dto.getUsername(),
+                        dto.getPhoneNumber(),
+                        dto.getEmail(),
+                        encodedPassword,
+                        false,
+                        role,
+                        dto.getDietaryRestriction(),
+                        dto.getAddress(),
+                        lat,
+                        lon
+                );
 
-            case "ROLE_CAREGIVER":
-                return new Caregiver(dto.getUsername(), dto.getPhoneNumber(), dto.getEmail(), encodedPassword, false, role,
-                        "Qualified Nurse");
+        case "ROLE_VOLUNTEER":
+            return new Volunteer(dto.getUsername(), dto.getPhoneNumber(), dto.getEmail(), encodedPassword, false, role,
+                    dto.getAvailability(), dto.getServices());
 
-            case "ROLE_RIDER":
-                return new Rider(dto.getUsername(), dto.getPhoneNumber(), dto.getEmail(), encodedPassword, false, role,
-                        "DL-0000000");
+        case "ROLE_CAREGIVER":
+            return new Caregiver(dto.getUsername(), dto.getPhoneNumber(), dto.getEmail(), encodedPassword, false, role,
+                    dto.getQualificationAndSkills());
 
-            case "ROLE_PARTNER":
-                return new Partner(dto.getUsername(), dto.getPhoneNumber(), dto.getEmail(), encodedPassword, false, role,
-                        "Org Name", "Description", "Address");
+        case "ROLE_RIDER":
+            return new Rider(dto.getUsername(), dto.getPhoneNumber(), dto.getEmail(), encodedPassword, false, role,
+                    dto.getDriverLicense());
 
-            case "ROLE_SUPPORTER":
-                return new Supporter(dto.getUsername(), dto.getPhoneNumber(), dto.getEmail(), encodedPassword, false, role,
-                        "Advocate", "Supports community events");
-
-            case "ROLE_DONOR":
-                return new Donor(dto.getUsername(), dto.getPhoneNumber(), dto.getEmail(), encodedPassword, false, role,
-                        "Individual", BigDecimal.ZERO);
-
-            default:
-                throw new RuntimeException("Unsupported role for registration: " + roleName);
+        case "ROLE_PARTNER":
+        double partnerLat;
+        double partnerLong;
+        try {
+            double[] coords = locationIQService.getCoordinatesFromAddress(dto.getCompanyAddress());
+            partnerLat = coords[0];  // latitude
+            partnerLong = coords[1]; // longitude
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to fetch coordinates for company address: " + e.getMessage());
         }
+
+        return new Partner(
+                dto.getUsername(),
+                dto.getPhoneNumber(),
+                dto.getEmail(),
+                encodedPassword,
+                false,
+                role,
+                dto.getCompanyName(),
+                dto.getCompanyDes(),
+                dto.getCompanyAddress(),
+                partnerLat,
+                partnerLong
+        );
+
+        case "ROLE_SUPPORTER":
+            return new Supporter(dto.getUsername(), dto.getPhoneNumber(), dto.getEmail(), encodedPassword, false, role,
+                    dto.getSupportType(), dto.getSupdescription());
+
+        case "ROLE_DONOR":
+            return new Donor(dto.getUsername(), dto.getPhoneNumber(), dto.getEmail(), encodedPassword, true, role,
+                    dto.getDonorType(), dto.getDonationAmount());
+
+        default:
+            throw new RuntimeException("Unsupported role for registration: " + roleName);
     }
+}
+
+
 
     private UserDTO mapToDTO(User user) {
         UserDTO dto = new UserDTO();

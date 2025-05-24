@@ -1,7 +1,7 @@
 package com.merrymeal.mealsonwheels_backend.dto;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class MealDTO {
     private Long id;
@@ -19,6 +19,12 @@ public class MealDTO {
     private Long partnerId;
 
     private Long menuId;
+
+    @Size(max = 50)
+    private String mealType;
+
+    @Size(max = 50)
+    private String mealDietary;
 
     // Getters and setters
     public Long getId() { return id; }
@@ -38,4 +44,10 @@ public class MealDTO {
 
     public Long getMenuId() { return menuId; }
     public void setMenuId(Long menuId) { this.menuId = menuId; }
+
+    public String getMealType() { return mealType; }
+    public void setMealType(String mealType) { this.mealType = mealType; }
+
+    public String getMealDietary() { return mealDietary; }
+    public void setMealDietary(String mealDietary) { this.mealDietary = mealDietary; }
 }

@@ -1,6 +1,6 @@
 package com.merrymeal.mealsonwheels_backend.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")

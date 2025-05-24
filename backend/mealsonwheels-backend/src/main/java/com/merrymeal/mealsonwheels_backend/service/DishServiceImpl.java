@@ -2,14 +2,13 @@ package com.merrymeal.mealsonwheels_backend.service;
 
 import com.merrymeal.mealsonwheels_backend.model.Dish;
 import com.merrymeal.mealsonwheels_backend.repository.DishRepository;
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class DishServiceImpl implements com.merrymeal.mealsonwheels_backend.service.DishService {
+public class DishServiceImpl implements DishService {
 
     private final DishRepository dishRepository;
 
@@ -46,9 +45,11 @@ public class DishServiceImpl implements com.merrymeal.mealsonwheels_backend.serv
     public Dish updateDish(Long id, Dish dishDetails) {
         return dishRepository.findById(id).map(dish -> {
             dish.setDishName(dishDetails.getDishName());
-            dish.setDescription(dishDetails.getDescription());
+            dish.setDishDesc(dishDetails.getDishDesc()); // Corrected this line
             dish.setPhoto(dishDetails.getPhoto());
             dish.setQuantity(dishDetails.getQuantity());
+            dish.setDishType(dishDetails.getDishType());           // Added new field
+            dish.setDishDietary(dishDetails.getDishDietary());     // Added new field
             dish.setMeal(dishDetails.getMeal());
             dish.setMenu(dishDetails.getMenu());
             return dishRepository.save(dish);
